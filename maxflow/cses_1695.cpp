@@ -57,32 +57,37 @@ int main()
 {
   fastio();
    
-  int n, m;
-  cin>>n>>m;
+  int n, m, k;
+  cin>>n>>m>>k;
 
-  for(int i = 0; i < m; i++){
+  for(int i = 0; i < k; i++){
     int a, b;
     cin>>a>>b;
+    b += n;
     g[a].push_back(b);
     g[b].push_back(a);
     capacity[a][b] = capacity[b][a] = 1;
     ej[a][b] = 1;
   }
   ll flow = 0;
-  while(ll new_flow = bfs(1, n)){
-    flow += new_flow;
-    int cur = n;
-    while(cur != 1){
-      int prev = parent[cur];
-      capacity[prev][cur] -= new_flow;
-      capacity[cur][prev] += new_flow;
-      cur = prev;
+  for(int i = 1; i <= n; i++){
+    for(int j = n + 1; j <= n + m; j++){
+      while(ll new_flow = bfs(1, n + m)){
+        flow += new_flow;
+        int cur = n;
+        while(cur != 1){
+          int prev = parent[cur];
+          capacity[prev][cur] -= new_flow;
+          capacity[cur][prev] += new_flow;
+          cur = prev;
+        }
+      }
     }
   }
   dfs(1, n);
   vector<pii> ans;
   for(int i = 1; i <= n; i++){
-    for(int j = 1; j <= n; j++) 
+    for(int j = n + 1; j <= n + m; j++) 
       if((!vis[i] && vis[j]) || (vis[i] && !vis[j]))
         if(ej[i][j]) ans.push_back({i, j});
   }
